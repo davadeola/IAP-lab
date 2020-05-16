@@ -8,6 +8,8 @@
   class User implements Crud
   {
 
+    
+
     function __construct($first_name, $last_name, $city_name)
     {
       $this->first_name = $first_name;
@@ -72,6 +74,27 @@
     public function removeAll()
     {
       return null;
+    }
+
+
+    public function validateForm(){
+      $fn = $this->first_name;
+      $ln = $this->last_name;
+      $city = $this->city_name;
+
+      if (fname == "" || lname == "" || city == "") {
+        return false;
+      }else{
+        return true;
+      }
+
+      
+    }
+
+    public function createFormErrorsSessions(){
+      session_start();
+      $_SESSION['form_errors'] = "All the fields are required";
+
     }
 
   }
