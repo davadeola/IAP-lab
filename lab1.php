@@ -9,12 +9,14 @@
     $first_name = $_POST['first_name'];
     $last_name = $_POST['last_name'];
     $city_name = $_POST['city_name'];
+    $username = $_POST['username'];
+    $password = $_POST['password'];
 
-    $user = new User($first_name, $last_name, $city_name);
-    if ($user->validateForm()) {
+    $user = new User($first_name, $last_name, $city_name, $username, $password);
+    if (!$user->validateForm()) {
       $user->createFormErrorsSessions();
       header("Refresh:0");
-      echo $user->first_name . "jshuiou";
+      // echo $user->first_name . "jshuiou";
       die();
     }
 
@@ -50,7 +52,7 @@
     <title>Title goes here</title>
 </head>
 <body>
-    <form class="" action="" method="post" onsubmit="return validateForm()" name="user_details" id="user_details">
+    <form class="" action="<?=$_SERVER['PHP_SELF']?>" method="post" onsubmit="return validateForm()" name="user_details" id="user_details">
       <table align="center">
       <tr>
         <td>
@@ -58,9 +60,9 @@
             <?php 
 
               session_start();
-              if(!empty($_SESSION['form-errors'])){
-                echo " " . $_SESSION['form-errors'];
-                unset($_SESSION[form-errors]);
+              if(!empty($_SESSION['form_errors'])){
+                echo " " . $_SESSION['form_errors'];
+                unset($_SESSION['form_errors']);
               }
 
             ?> 
@@ -77,7 +79,23 @@
           <td><input type="text" name="city_name"  placeholder="City"/></td>
         </tr>
         <tr>
+        <tr>
+          <td><input type="text" name="username" placeholder="Username"></td>
+        </tr>
+
+        </tr>
+            <td><input type="password" name="password" id="" placeholder="Password"></td>
+        <tr>
+
+        <tr>
+              <td>Profile Image: <input type="file" name="fileToUpload" id="fileToUpload"></td>
+        </tr>
+
           <td><button type="submit" name="btn-save"><strong>SAVE</strong></button></td>
+        </tr>
+
+        <tr>
+            <td><a href="login.php">Login</a></td>
         </tr>
       </table>
     </form>
