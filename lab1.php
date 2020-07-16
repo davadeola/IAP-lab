@@ -1,9 +1,11 @@
 <?php
   include_once 'DBConnector.php';
   include_once 'User.php';
+  include_once 'fileUploader.php';
 
 
   $con = new DBConnector;
+  
 
   if (isset($_POST['btn-save'])) {
     $first_name = $_POST['first_name'];
@@ -12,24 +14,75 @@
     $username = $_POST['username'];
     $password = $_POST['password'];
 
+
+    $_SESSION['username'] = $username;
+    
+    $file_name = $_FILES['fileToUpload']['name'];
+    $file_size = $_FILES['fileToUpload']['size'];
+    $final_file_name = $_FILES['fileToUpload']['tmp_name'];
+    $file_type = strtolower(pathinfo($file_name, PATHINFO_EXTENSION));
+
     $user = new User($first_name, $last_name, $city_name, $username, $password);
+
+    //FileUpload Instance
+      $fileUpload = new FileUploader();
+
+      //Setting the username
+      $fileUpload->setUsername($username);
+
+      //Using setter methods
+      $fileUpload->setOriginalName($file_name);
+      $fileUpload->setFileType($file_type);
+      $fileUpload->setFinalFileName($final_file_name);
+      $fileUpload->setFileSize($file_size);
+
     if (!$user->validateForm()) {
       $user->createFormErrorsSessions();
       header("Refresh:0");
-      // echo $user->first_name . "jshuiou";
       die();
+    }else{
+      if ($fileUpload->fileWasSelected()) {
+        
+        if ($fileUpload->fileTypeisCorrect()) {
+          
+          if ($fileUpload->fileSizeIsCorrect()) {
+            
+            if (!($fileUpload->fileAlreadyExists())) {
+              $res = $user->save();
+             $fileUpload->uploadFile();
+
+             if ($res) {
+              echo "Save operation was successful";
+            }else{
+              echo "An error occurred";
+            }
+  
+            }else{
+              echo "FILE EXISTS"."<br>";
+  
+            }
+  
+          }else{
+            echo "PICK A SMALLER SIZE"."<br>";
+          }
+  
+        }else{
+          echo "INCORRECT TYPE"."<br>";
+        }
+  
+  
+      }else{echo "NO FILE DETECTED"."<br>";}
+
+      
+
     }
 
     
-    $res = $user->save();
+    
+    
 
 
-
-    if ($res) {
-      echo "Save operation was successful";
-    }else{
-      echo "An error occurred";
-    }
+    
 
     $data = $user->readAll();
 
@@ -52,7 +105,7 @@
     <title>Title goes here</title>
 </head>
 <body>
-    <form class="" action="<?=$_SERVER['PHP_SELF']?>" method="post" onsubmit="return validateForm()" name="user_details" id="user_details">
+    <form class="" action="<?=$_SERVER['PHP_SELF']?>" method="post" onsubmit="return validateForm()" name="user_details" id="user_details" enctype="multipart/form-data">
       <table align="center">
       <tr>
         <td>

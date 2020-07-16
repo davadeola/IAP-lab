@@ -3,9 +3,7 @@
   include_once 'DBConnector.php';
   include "authenticator.php";
 
-  /**
-   *
-   */
+ 
   class User implements Crud, Authenticator
   {
     private $user_id;
@@ -38,8 +36,6 @@
 
     public function save()
     {
-
-
       $fn = $this->first_name;
       $ln = $this->last_name;
       $city = $this->city_name;
@@ -48,10 +44,15 @@
       $pass = $this->password;
       $con = new DBConnector();
 
-
-
-      $res = mysqli_query($con->conn ,"INSERT INTO userme(first_name, last_name, user_city, username, password) VALUES('$fn', '$ln', '$city', '$uname','$pass')") or die("Error: ". mysqli_error($con->conn));
+      if ($this->isUserExists()) {
+        echo "<script>alert('Username is taken')</script>";
+        header("Refresh:0");
+      }else{
+        $res = mysqli_query($con->conn ,"INSERT INTO userme(first_name, last_name, user_city, username, password) VALUES('$fn', '$ln', '$city', '$uname','$pass')") or die("Error: ". mysqli_error($con->conn));
       return res;
+      }
+
+      
     }
 
     public function readUnique()
@@ -171,6 +172,19 @@
       unset($_SESSION['username']);
       session_destroy();
       header("Location:lab1.php");
+    }
+
+    public function isUserExists(){
+      $con = new DBConnector;
+      $taken = false;
+      $res = mysqli_query($con->conn, "SELECT * FROM userme") or die("Error: ". mysqli_error($con->conn));
+
+      while($row = mysqli_fetch_array($res)){
+        if ($this->getUsername()==$row['username']) {
+          $taken = true;
+        }
+      }
+      return $taken;
     }
 
   }
