@@ -12,6 +12,9 @@
     private $city_name;
     private $username;
     private $password;
+
+    private $tmzn_off;
+    private $utc_timestamp;
     
 
     function __construct($first_name, $last_name, $city_name, $username, $password)
@@ -34,6 +37,29 @@
       return $this->$user_id;
     }
 
+    public function getTimezoneOffset()
+    {
+        return $this->tmzn_off;
+    }
+
+    public function setTimezoneOffset($tMzOffset)
+    {
+        $this->tmzn_off = $tMzOffset;
+    }
+
+
+    //Utc_timestamp (Set and Get)
+    public function getUtcTimestamp()
+    {
+        return $this->utc_timestamp;
+    }
+
+    public function setUtcTimestamp($utc_timestamp)
+    {
+        $this->utc_timestamp = $utc_timestamp;
+    }
+
+
     public function save()
     {
       $fn = $this->first_name;
@@ -42,13 +68,15 @@
       $uname = $this->username;
       $this->hashPassword();
       $pass = $this->password;
+      $tMzOffset = $this->getTimezoneOffset();
+      $utc_tmstp = $this->getUtcTimestamp();
       $con = new DBConnector();
 
       if ($this->isUserExists()) {
         echo "<script>alert('Username is taken')</script>";
         header("Refresh:0");
       }else{
-        $res = mysqli_query($con->conn ,"INSERT INTO userme(first_name, last_name, user_city, username, password) VALUES('$fn', '$ln', '$city', '$uname','$pass')") or die("Error: ". mysqli_error($con->conn));
+        $res = mysqli_query($con->conn ,"INSERT INTO userme(first_name, last_name, user_city, username, password, created_time, offset) VALUES('$fn', '$ln', '$city', '$uname','$pass', '$utc_tmstp', '$tMzOffset')") or die("Error: ". mysqli_error($con->conn));
       return res;
       }
 

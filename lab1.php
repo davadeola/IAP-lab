@@ -15,6 +15,10 @@
     $password = $_POST['password'];
 
 
+    $utc_timestamp = $_POST['utc_timestamp'];
+      $offset = $_POST['time_zone_offset'];
+
+
     $_SESSION['username'] = $username;
     
     $file_name = $_FILES['fileToUpload']['name'];
@@ -23,6 +27,9 @@
     $file_type = strtolower(pathinfo($file_name, PATHINFO_EXTENSION));
 
     $user = new User($first_name, $last_name, $city_name, $username, $password);
+
+    $user->setUtcTimestamp($utc_timestamp);
+    $user->setTimezoneOffset($offset);
 
     //FileUpload Instance
       $fileUpload = new FileUploader();
@@ -101,6 +108,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="validate.js" type="text/javascript"></script>
+    <script src= "https://ajax.googleapis.com/ajax/libs/jquery/3.4.0/jquery.min.js"></script> 
+    <script type="text/javascript" src="timezone.js"></script>
     <link rel="stylesheet" href="validate.css">
     <title>Title goes here</title>
 </head>
@@ -144,7 +153,15 @@
               <td>Profile Image: <input type="file" name="fileToUpload" id="fileToUpload"></td>
         </tr>
 
-          <td><button type="submit" name="btn-save"><strong>SAVE</strong></button></td>
+        <tr>
+                 <td> <input type="hidden" name="utc_timestamp" id="utc_timestamp" value=""> </td> 
+             </tr>
+
+             <tr>
+                     <td> <input type="hidden" name="time_zone_offset" id="time_zone_offset" value=""> </td>
+             </tr>
+
+          <td><button type="submit" name="btn-save" id="submit"><strong>SAVE</strong></button></td>
         </tr>
 
         <tr>
