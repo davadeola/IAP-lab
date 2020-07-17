@@ -193,6 +193,7 @@
     public function createUserSession(){
       session_start();
       $_SESSION['username'] = $this->getUsername();
+     // $_SESSION['id'] = $this->getUserId();
     }
 
     public function logout(){
